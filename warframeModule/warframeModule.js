@@ -1,3 +1,12 @@
+/*
+ * @Author: duanaoqi duanaoqi@huawei.com
+ * @Date: 2024-01-31 16:17:58
+ * @LastEditors: duanaoqi duanaoqi@huawei.com
+ * @LastEditTime: 2024-02-01 14:13:14
+ * @Description: 机器人的wf模块
+ * Copyright (c) 2024 by duanaoqi, All Rights Reserved. 
+ */
+
 import warframeApis from "./request/getWarframeInfo.js"
 import warframeMarketApis from "./request/getWarframeMarketInfo.js"
 import { sendTextMsgToGroup } from "../msgHandle/msgSender.js"
@@ -22,10 +31,10 @@ warframeModule.keyWord = {
 }
 
 /**
- * @description: wf检定，判断是否有wf关键词  别问为什么叫wf检定，因为我在玩博德之门
+ * @description: wf检定，判断是否有wf关键词
  * @param {*} fromUin 来源群号
  * @param {*} msg 消息内容
- * @return {*}
+ * @return {boolean} true|false 检定成功|检定失败
  */
 warframeModule.check = (fromUin, msg) => {
   // wf固定词查询功能
@@ -33,7 +42,7 @@ warframeModule.check = (fromUin, msg) => {
     warframeModule.keyWord[msg].then(res => {
       sendTextMsgToGroup(fromUin, res);
     })
-    return;
+    return true;
   }
   // 需要匹配二段词查询的内容  比如： wiki 啥b
   // wiki
@@ -50,9 +59,9 @@ warframeModule.check = (fromUin, msg) => {
         break;
       default:
         const url = `https://warframe.huijiwiki.com/wiki/${wikiSearchRes?.data}`;
-        sendTextMsgToGroup(fromUin, `少爷,这是您要的wiki链接^^:${url}`);
+        sendTextMsgToGroup(fromUin, `少爷,这是您要的wiki链接:${url}`);
     }
-    return;
+    return true;
   }
   // wm
   const wmSearchRes = splitMsgBySearchKey(msg, 'wm');
@@ -72,8 +81,9 @@ warframeModule.check = (fromUin, msg) => {
           sendTextMsgToGroup(fromUin, res);
         })
     }
-    return;
+    return true;
   }
+  return false;
 }
 
 export default warframeModule;

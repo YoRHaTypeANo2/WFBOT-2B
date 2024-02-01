@@ -2,15 +2,15 @@
  * @Author: duanaoqi duanaoqi@huawei.com
  * @Date: 2024-01-30 18:48:56
  * @LastEditors: duanaoqi duanaoqi@huawei.com
- * @LastEditTime: 2024-01-31 16:05:53
+ * @LastEditTime: 2024-02-01 14:59:44
  * @Description: 负责消息接收、归类、转发
  * Copyright (c) 2024 by duanaoqi, All Rights Reserved. 
  */
 
 import { buffer2Json } from '../utils/msgUtil.js'
-import { sendTextMsgToGroup } from  '../msgHandle/msgSender.js'
 import botConfig from '../utils/botConfig.js'
 import warframeModule from '../warframeModule/warframeModule.js'
+import universalModule from '../customModule/universal.js'
 /**
  * @description: 消息处理
  * @param {*} msgBuffer
@@ -23,10 +23,12 @@ const msgHandle = (msgBuffer) => {
   const eventName = msgJson?.CurrentPacket?.EventName;
   // 来源群id
   const fromUin = msgJson?.CurrentPacket?.EventData?.MsgHead?.FromUin;
-  // 来源人信息(私聊时生效)
+  // 来源人信息(群聊时为发言者、私聊时为指定用户)
   const senderUin = msgJson?.CurrentPacket?.EventData?.MsgHead?.SenderUin;
   // 内容
   const content = msgJson?.CurrentPacket?.EventData?.MsgBody?.Content;
+  // @指定用户的列表
+  const atList = msgJson?.CurrentPacket?.EventData?.MsgBody?.AtUinLists || [];
   // 自己的消息不回
   // 屏蔽的群消息不回
   // 空content不回
@@ -39,17 +41,19 @@ const msgHandle = (msgBuffer) => {
   }
   // 群消息处理
   if (eventName === 'ON_EVENT_GROUP_NEW_MSG') {
-    // WF群过一次wf检定
-    if (botConfig.WF_GROUP.includes(fromUin)) {
-      warframeModule.check(fromUin, content);
-    }
-    if (content === '铸币') {
-      sendTextMsgToGroup(fromUin, "铸币");
-    }
+    // wf检定
+    const groupInfoCheck = (botConfig.WF_GROUP.includes(fromUin) && warframeModule.check(fromUin, content)) ||
+    // moli群过检定
+    // 通用检定
+    universalModule.check(fromUin, senderUin, content, atList); //通用检定
+    // 我知道当你看见这些注释
+    // 会在想为什么叫检定
+    // 因为我最近在玩博德之门^^
+    console.log('检定结果：', groupInfoCheck ? '成功' : '失败');
   }
-  console.log(`
-  EventName: ${eventName},  FromUin: ${fromUin},  Content: ${content}
-  `);
+  // console.log(`
+  // EventName: ${eventName},  FromUin: ${fromUin},  Content: ${content}, body: ${JSON.stringify(msgJson?.CurrentPacket?.EventData?.MsgBody)}
+  // `);
 }
 
 export {

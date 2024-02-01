@@ -2,7 +2,7 @@
  * @Author: duanaoqi duanaoqi@huawei.com
  * @Date: 2024-01-30 18:58:29
  * @LastEditors: duanaoqi duanaoqi@huawei.com
- * @LastEditTime: 2024-01-31 10:11:28
+ * @LastEditTime: 2024-02-01 11:25:01
  * @Description: 发送各种消息
  * Copyright (c) 2024 by duanaoqi, All Rights Reserved. 
  */
@@ -25,13 +25,14 @@ const instance = axios.create({
  * @param {*} msgData 消息（文字）
  * @return {*}
  */
-const getReqBodyForGroupText = (groupId, msgData) => {
+const getReqBodyForGroupText = (groupId, msgData, atList) => {
   return JSON.stringify({
     "CgiCmd": "MessageSvc.PbSendMsg",
     "CgiRequest": {
       "ToUin": groupId,
       "ToType": 2,
       "Content": msgData,
+      "AtUinLists": atList,
     }
   })
 }
@@ -40,11 +41,12 @@ const getReqBodyForGroupText = (groupId, msgData) => {
  * @description: 发送群消息(文字)
  * @param {*} groupId 群号
  * @param {*} msgData 消息
+ * @param {*} atList at的成员列表
  * @return {*}
  */
-const sendTextMsgToGroup = (groupId, msgData) => {
+const sendTextMsgToGroup = (groupId, msgData, atList = []) => {
   instance.post('',
-    getReqBodyForGroupText(groupId, msgData)
+    getReqBodyForGroupText(groupId, msgData, atList)
   )
   .then(res => {
     // res暂时就不管了
