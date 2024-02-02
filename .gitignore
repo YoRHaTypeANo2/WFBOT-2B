@@ -130,3 +130,4 @@ dist
 utils/botConfig.js
 .pnp.*
 utils/wordDict.js
+customModule/singalGroupModules/

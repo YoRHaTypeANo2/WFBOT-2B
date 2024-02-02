@@ -2,7 +2,7 @@
  * @Author: duanaoqi duanaoqi@huawei.com
  * @Date: 2024-01-30 18:48:56
  * @LastEditors: duanaoqi duanaoqi@huawei.com
- * @LastEditTime: 2024-02-01 14:59:44
+ * @LastEditTime: 2024-02-02 11:08:14
  * @Description: 负责消息接收、归类、转发
  * Copyright (c) 2024 by duanaoqi, All Rights Reserved. 
  */
@@ -11,6 +11,7 @@ import { buffer2Json } from '../utils/msgUtil.js'
 import botConfig from '../utils/botConfig.js'
 import warframeModule from '../warframeModule/warframeModule.js'
 import universalModule from '../customModule/universal.js'
+import moliGroupModule from '../customModule/singalGroupModules/moliGroup.js'
 /**
  * @description: 消息处理
  * @param {*} msgBuffer
@@ -44,6 +45,7 @@ const msgHandle = (msgBuffer) => {
     // wf检定
     const groupInfoCheck = (botConfig.WF_GROUP.includes(fromUin) && warframeModule.check(fromUin, content)) ||
     // moli群过检定
+    moliGroupModule.check(fromUin, senderUin, content, atList) ||
     // 通用检定
     universalModule.check(fromUin, senderUin, content, atList); //通用检定
     // 我知道当你看见这些注释
