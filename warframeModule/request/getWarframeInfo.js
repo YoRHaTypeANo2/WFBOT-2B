@@ -2,7 +2,7 @@
  * @Author: duanaoqi duanaoqi@huawei.com
  * @Date: 2024-01-31 10:11:01
  * @LastEditors: duanaoqi duanaoqi@huawei.com
- * @LastEditTime: 2024-01-31 14:21:54
+ * @LastEditTime: 2024-02-06 14:35:32
  * @Description: warframe相关api接口
  * Copyright (c) 2024 by duanaoqi, All Rights Reserved. 
  */
@@ -16,6 +16,12 @@ const instance = axios.create({
   baseURL: botConfig.WF_SERVICE_HOST,
   timeout: botConfig.WF_TIME_OUT,
   headers: botConfig.BOT_SERVICE_HEADERS
+})
+
+instance.interceptors.response.use((res) => {
+  return res;
+}, err => {
+  console.log('err', err);
 })
 
 /**
@@ -173,7 +179,13 @@ warframeApis.getZarimanCycle = () => {
  */
 warframeApis.getWikiWebSite = () => {
   return new Promise((resolve, reject) => {
-    resolve('少爷,这是您要的wiki链接^^:https://warframe.huijiwiki.com')
+    resolve(`少爷,这是您要的wiki链接:https://warframe.huijiwiki.com`);
+  })
+}
+
+warframeApis.getWmWebSite = () => {
+  return new Promise((resolve, reject) => {
+    resolve(`少爷,这是您要的wm链接:warframe.market'`);
   })
 }
 
